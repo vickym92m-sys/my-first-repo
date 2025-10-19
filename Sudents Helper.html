@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animated Login Dashboard</title>
+  <!-- Encourage loading resources over HTTPS when possible -->
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <!-- Google Fonts for cursive welcome -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      overflow-x: hidden;
+    }
+    .center {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+    }
+    #loginPage {
+      position: relative;
+      background-image: url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    #loginPage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(102,126,234,0.45), rgba(118,75,162,0.45));
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: normal;
+    }
+    #loginPage .card { z-index: 2; }
+    .card {
+      background: white;
+      color: #4c51bf;
+      border-radius: 20px;
+      padding: 50px 30px 30px 30px;
+      width: 300px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      animation: float 3s ease-in-out infinite;
+      position: relative;
+      z-index: 2;
+      overflow: visible;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .boy-container {
+      position: absolute;
+      left: 50%;
+      width: 70px;
+      height: 100px;
+      z-index: 120;
+      pointer-events: none;
+      user-select: none;
+      top: 0;
+      transform: translate(-50%, 0);
+      transition: top 0.4s cubic-bezier(.6,1.5,.5,1), filter 0.22s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .boy-face {
+      width: 60px;
+      height: 60px;
+      transition: transform 0.22s cubic-bezier(.55,1.4,.55,1.4);
+      pointer-events: all;
+      cursor: pointer;
+      z-index: 121;
+      position: relative;
+    }
+    .boy-face.super-pop-eyes .boy-eye-left,
+    .boy-face.super-pop-eyes .boy-eye-right {
+      filter: drop-shadow(0 0 24px #4c51bf);
+      transition: transform 0.4s cubic-bezier(.65,0,.35,1), r 0.4s;
+    }
+    .boy-face.laughing {
+      animation: laugh-bounce 0.45s cubic-bezier(.55,1.4,.55,1.4) 2;
+    }
+    .boy-face.shock .boy-mouth-normal,
+    .boy-face.smile .boy-mouth-normal,
+    .boy-face.devil .boy-mouth-normal {
+      display: none;
+    }
+    .boy-face.shock .boy-mouth-shock { display: inline; }
+    .boy-face.smile .boy-mouth-smile { display: inline; }
+    .boy-face.devil .boy-mouth-devil { display: inline; }
+    .boy-face .boy-mouth-shock,
+    .boy-face .boy-mouth-smile,
+    .boy-face .boy-mouth-devil {
+      display: none;
+    }
+    .boy-face.smile .boy-eyebrow-left,
+    .boy-face.smile .boy-eyebrow-right {
+      stroke: #059669;
+      stroke-width: 2.5;
+    }
+    .boy-face.devil .boy-eyebrow-left,
+    .boy-face.devil .boy-eyebrow-right {
+      stroke: #b91c1c;
+      stroke-width: 3;
+    }
+    .boy-face.devil .boy-eye-left,
+    .boy-face.devil .boy-eye-right {
+      fill: #b91c1c;
+    }
+    @keyframes laugh-bounce {
+      0%   { transform: rotate(0deg) scale(1); }
+      15%  { transform: rotate(-15deg) scale(1.05); }
+      30%  { transform: rotate(12deg) scale(1.08);}
+      50%  { transform: rotate(-8deg) scale(1.1);}
+      70%  { transform: rotate(10deg) scale(1.06);}
+      90%  { transform: rotate(-4deg) scale(1.03);}
+      100% { transform: rotate(0deg) scale(1);}
+    }
+    .noob-popup, .leaveit-popup, .genius-popup, .smile-popup, .devil-popup {
+      position: absolute;
+      left: 50%;
+      background: #4c51bf;
+      color: #fff;
+      padding: 6px 18px;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(76,81,191,0.13);
+      font-size: 1.1em;
+      font-weight: bold;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.3s, transform 0.3s;
+      white-space: nowrap;
+    }
+    .noob-popup {
+      top: 100%;
+      transform: translate(-50%, 18px);
+    }
+    .noob-popup.show {
+      opacity: 1;
+      transform: translate(-50%, 40px) scale(1.12);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .leaveit-popup {
+      top: 100%;
+      background: #db2777;
+      transform: translate(-50%, 18px);
+    }
+    .leaveit-popup.show {
+      opacity: 1;
+      transform: translate(-50%, 55px) scale(1.12);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .genius-popup {
+      top: 100%;
+      background: #059669;
+      transform: translate(-50%, 18px);
+    }
+    .genius-popup.show {
+      opacity: 1;
+      transform: translate(-50%, 70px) scale(1.12);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .smile-popup {
+      top: 100%;
+      background: #0891b2;
+      color: #fff;
+      transform: translate(-50%, 18px);
+    }
+    .smile-popup.show {
+      opacity: 1;
+      transform: translate(-50%, 70px) scale(1.12);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .devil-popup {
+      top: 100%;
+      background: #b91c1c;
+      color: #fff;
+      transform: translate(-50%, 18px);
+    }
+    .devil-popup.show {
+      opacity: 1;
+      transform: translate(-50%, 88px) scale(1.12);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .laughing-emojis {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, 110px);
+      opacity: 0;
+      pointer-events: none;
+      font-size: 2em;
+      transition: opacity 0.25s;
+      z-index: 101;
+      white-space: nowrap;
+    }
+    .laughing-emojis.show {
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrapper input[type="password"], 
+    .password-wrapper input[type="text"] {
+      width: 100%;
+      padding-right: 38px;
+    }
+    .password-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      color: #aaa;
+      outline: none;
+      z-index: 4;
+      transition: color 0.2s;
+      padding: 0;
+      line-height: 1;
+      user-select: none;
+    }
+    .password-eye.closed {
+      color: #4c51bf;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: #4c51bf;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #434190; }
+    .link { color: #4c51bf; cursor: pointer; }
+    .car-container {
+      position: absolute;
+      left: 0;
+      bottom: 30px;
+      width: 100%;
+      height: 100px;
+      pointer-events: none;
+      z-index: 10;
+      overflow: visible;
+    }
+    .car-svg {
+      width: 80px;
+      height: 50px;
+      position: absolute;
+      left: 50%;
+      top: 30px;
+      transform: translate(-50%, 0) scale(1);
+      transition:
+        transform 0.13s cubic-bezier(.26,.97,.52,1.14);
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,0.25));
+      will-change: transform;
+    }
+    .dashboard {
+      display: none;
+      min-height: 100vh;
+      padding: 28px;
+      background: linear-gradient(180deg,#f6f7fb,#eef2ff);
+      color: #1f2937;
+      box-sizing: border-box;
+    }
+    .dashboard .topbar {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .dashboard .topbar h1 { margin:0; font-size:1.25rem; color:#0f172a; }
+    .dashboard .topbar .actions { display:flex; gap:8px; align-items:center; }
+    .dashboard .grid {
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:18px;
+    }
+    .profile-card {
+      background:#fff; 
+      border-radius:12px; 
+      padding:16px; 
+      box-shadow:0 6px 20px rgba(2,6,23,0.06);
+      background-image: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&w=800&q=80');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .profile-card h2 { 
+      margin: 0;
+      font-size:1.05rem; 
+      color: #4c51bf;
+      font-weight: 700;
+    }
+    .profile-card p { margin:0; color:#374151; font-size:0.9rem; }
+    .links-panel { display:grid; gap:12px; margin-bottom:12px; }
+    .link-card { background:#fff; padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 12px rgba(2,6,23,0.04); }
+    .link-card .meta { font-size:0.9rem; color:#0f172a; }
+    .link-card a { color:#2563eb; text-decoration:none; font-weight:600; }
+    .link-card a:hover { color: #059669; text-decoration: underline; }
+    .main-area { display:flex; flex-direction:column; gap:12px; }
+    .panel { background:#fff; padding:14px; border-radius:12px; box-shadow:0 6px 18px rgba(2,6,23,0.04); }
+    .panel h3 { margin:0 0 8px 0; font-size:1rem; }
+    .list { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { background:#eef2ff; color:#1e3a8a; padding:6px 10px; border-radius:999px; font-weight:600; font-size:0.9rem; cursor:pointer; text-decoration: none; display:inline-flex; align-items:center; }
+    .updates { max-height:160px; overflow:auto; padding-right:6px; }
+    .btn { background:#4c51bf; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .btn.ghost { background:transparent; color:#374151; border:1px solid #e6e8f0; }
+    .intro {
+      margin: 8px 0 18px;
+      color: #334155;
+      background: rgba(255,255,255,0.9);
+      padding: 10px 14px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+      max-width: 1100px;
+      line-height: 1.4;
+      font-size: 0.95rem;
+    }
+    .welcome-cursive {
+      font-family: 'Pacifico', cursive;
+      font-size: 3.2em;
+      color: #764ba2;
+      margin: 0;
+      line-height: 1.1;
+      letter-spacing: 1px;
+    }
+    .hero-main-text {
+      font-size: 22px !important;
+    }
+    .account-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(44,51,73,0.18);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .account-modal.active {
+      display: flex;
+    }
+    .account-modal-content {
+      background: #fff;
+      color: #222;
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(44,51,73,0.18);
+      padding: 32px 28px 24px 28px;
+      min-width: 320px;
+      max-width: 95vw;
+      position: relative;
+      font-size: 1.1em;
+    }
+    .account-modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.3em;
+      color: #4c51bf;
+      font-family: 'Poppins', sans-serif;
+    }
+    .account-modal-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.7em;
+      color: #b91c1c;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .account-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 2.1em;
+      color: #4c51bf;
+      margin-left: 12px;
+      margin-right: 2px;
+      transition: color 0.2s;
+      vertical-align: middle;
+      position: relative;
+      z-index: 2;
+    }
+    .account-icon-btn:hover {
+      color: #764ba2;
+    }
+    .top-icons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-right: 12px;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.7em;
+      color: #4c51bf;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .icon-btn:hover {
+      color: #764ba2;
+    }
+    .icon-tooltip {
+      display: none;
+      position: absolute;
+      top: 38px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      color: #222;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(44,51,73,0.13);
+      padding: 10px 16px;
+      font-size: 1em;
+      z-index: 10001;
+      min-width: 180px;
+      max-width: 260px;
+    }
+    .icon-btn:focus .icon-tooltip,
+    .icon-btn:hover .icon-tooltip {
+      display: block;
+    }
+    .icon-tooltip a {
+      display: block;
+      color: #4c51bf;
+      text-decoration: none;
+      margin: 4px 0;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .icon-tooltip a:hover {
+      color: #059669;
+      text-decoration: underline;
+    }
+    .hero {
+      position: relative;
+      background-image: url('https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 12px;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(10,25,47,0.55), rgba(76,81,191,0.35));
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero > * { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+  <div id="loginPage" class="center">
+    <div class="card" id="cardBox">
+      <div class="boy-container" id="boyContainer">
+        <svg class="boy-face" id="boyFace" viewBox="0 0 70 70" fill="none">
+          <circle cx="35" cy="35" r="30" fill="#ffe0b2" stroke="#8d5c2c" stroke-width="2"/>
+          <ellipse cx="23" cy="37" rx="7" ry="9" fill="#fff"/>
+          <ellipse cx="47" cy="37" rx="7" ry="9" fill="#fff"/>
+          <ellipse class="boy-eye-left" id="boyEyeLeft" cx="23" cy="39" rx="3" ry="4" fill="#222" transform="translate(0 0) scale(1)"/>
+          <ellipse class="boy-eye-right" id="boyEyeRight" cx="47" cy="39" rx="3" ry="4" fill="#222" transform="translate(0 0) scale(1)"/>
+          <ellipse cx="23" cy="37" rx="1.5" ry="2" fill="#fff"/>
+          <ellipse cx="47" cy="37" rx="1.5" ry="2" fill="#fff"/>
+          <path class="boy-mouth-normal" d="M22 52 Q35 62 48 52 Q35 57 22 52 Z" fill="#cc6e2c" stroke="#8d5c2c" stroke-width="2"/>
+          <ellipse class="boy-mouth-shock" cx="35" cy="53" rx="6" ry="7" fill="#fff" stroke="#8d5c2c" stroke-width="2"/>
+          <ellipse class="boy-mouth-shock" cx="35" cy="55" rx="3" ry="3" fill="#db2777"/>
+          <path class="boy-mouth-smile" d="M28 54 Q35 60 42 54" stroke="#059669" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path class="boy-mouth-devil" d="M28 54 Q35 67 42 54" stroke="#b91c1c" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path class="boy-eyebrow-left" d="M17 29 Q23 27 29 29" stroke="#8d5c2c" stroke-width="2" stroke-linecap="round"/>
+          <path class="boy-eyebrow-right" d="M41 29 Q47 27 53 29" stroke="#8d5c2c" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 22 Q20 12 35 13 Q50 12 56 22 Q40 9 25 18" stroke="#8d5c2c" stroke-width="3" fill="none"/>
+        </svg>
+        <div class="noob-popup" id="noobPopup">NOOB</div>
+        <div class="leaveit-popup" id="leaveItPopup">LEAVE IT baby ....</div>
+        <div class="genius-popup" id="geniusPopup">You are genius</div>
+        <div class="smile-popup" id="smilePopup">heheh 😁😊😄 thank you for entering.</div>
+        <div class="devil-popup" id="devilPopup">Now it's my turn 😈</div>
+        <div class="laughing-emojis" id="laughingEmojis">😂🤣😹😆😂🤣</div>
+      </div>
+      <h2 id="formTitle">Login</h2>
+      <div class="username-row" id="usernameRow">
+        <label class="username-label" for="username">Username</label>
+        <input type="text" id="username" placeholder="Username" autocomplete="username" />
+      </div>
+      <input type="email" id="email" placeholder="Email" autocomplete="email" />
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
+        <button type="button" class="password-eye" id="passwordEye" tabindex="-1" aria-label="Show/Hide Password">👁️</button>
+      </div>
+      <button onclick="login()">Login</button>
+      <p>Don’t have an account? <span class="link" onclick="toggleForm()">Register</span></p>
+      <div class="car-container">
+        <svg class="car-svg" id="carSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 40">
+          <ellipse cx="40" cy="32" rx="32" ry="8" fill="#333" opacity="0.15"/>
+          <rect x="12" y="18" rx="6" width="56" height="16" fill="#4c51bf" stroke="#222" stroke-width="2"/>
+          <rect x="28" y="10" width="28" height="10" rx="4" fill="#7f9cf5" stroke="#222" stroke-width="2"/>
+          <ellipse cx="24" cy="34" rx="6" ry="6" fill="#222"/>
+          <ellipse cx="24" cy="34" rx="3" ry="3" fill="#fff"/>
+          <ellipse cx="56" cy="34" rx="6" ry="6" fill="#222"/>
+          <ellipse cx="56" cy="34" rx="3" ry="3" fill="#fff"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="dashboard" id="dashboard">
+    <div class="topbar">
+      <div class="actions">
+        <div class="top-icons">
+          <button class="icon-btn" id="iconSocial" title="Social Media" tabindex="0">
+            <span>🌐</span>
+            <div class="icon-tooltip" id="tooltipSocial">
+              <a href="https://facebook.com" target="_blank">Facebook</a>
+              <a href="https://twitter.com" target="_blank">Twitter/X</a>
+              <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+              <a href="https://instagram.com" target="_blank">Instagram</a>
+            </div>
+          </button>
+          <button class="icon-btn" id="iconNews" title="News Channels" tabindex="0">
+            <span>📰</span>
+            <div class="icon-tooltip" id="tooltipNews">
+              <a href="https://www.bbc.com" target="_blank">BBC</a>
+              <a href="https://www.cnn.com" target="_blank">CNN</a>
+              <a href="https://www.reuters.com" target="_blank">Reuters</a>
+              <a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a>
+            </div>
+          </button>
+          <button class="icon-btn" id="iconVideo" title="Video Channels" tabindex="0">
+            <span>🎥</span>
+            <div class="icon-tooltip" id="tooltipVideo">
+              <a href="https://www.youtube.com" target="_blank">YouTube - News</a>
+              <a href="https://www.youtube.com" target="_blank">YouTube - Tech</a>
+            </div>
+          </button>
+          <button class="icon-btn" id="iconStudy" title="Study Materials" tabindex="0">
+            <span>📚</span>
+            <div class="icon-tooltip" id="tooltipStudy">
+              <a href="https://www.khanacademy.org" target="_blank">Khan Academy</a>
+              <a href="https://ocw.mit.edu" target="_blank">MIT OCW</a>
+              <a href="https://www.coursera.org" target="_blank">Coursera</a>
+              <a href="https://nptel.ac.in" target="_blank">NPTEL</a>
+              <a href="https://swayam.gov.in" target="_blank">SWAYAM</a>
+              <a href="https://ncert.nic.in" target="_blank">NCERT</a>
+            </div>
+          </button>
+          <button class="icon-btn" id="iconGov" title="Government Portals" tabindex="0">
+            <span>🏛️</span>
+            <div class="icon-tooltip" id="tooltipGov">
+              <a href="https://www.india.gov.in" target="_blank">India.gov.in</a>
+              <a href="https://www.education.gov.in" target="_blank">Education.gov.in</a>
+              <a href="https://www.ugc.ac.in" target="_blank">UGC</a>
+              <a href="https://scholarships.gov.in" target="_blank">Scholarships.gov.in</a>
+              <a href="https://data.gov.in" target="_blank">Data.gov.in</a>
+              <a href="https://www.gov.uk" target="_blank">Gov.UK</a>
+              <a href="https://www.usa.gov" target="_blank">USA.gov</a>
+            </div>
+          </button>
+        </div>
+        <span id="userEmail" style="color:#374151; font-weight:600"></span>
+        <button class="account-icon-btn" id="accountIconBtn" title="Account Settings" aria-label="Account">
+          <span>👤</span>
+        </button>
+        <button class="btn" id="logoutBtn" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <section class="hero" style="margin-bottom:18px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+      <div style="flex-shrink:0;">
+        <div style="background:linear-gradient(135deg,#667eea 60%,#764ba2 100%);border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(76,81,191,0.13);">
+          <span style="font-size:2.8em;">🚀</span>
+        </div>
+      </div>
+      <div style="flex:1;min-width:220px;">
+        <h1 class="welcome-cursive">Welcome</h1>
+        <div class="hero-main-text" style="color:#0de2ca;font-weight:700;letter-spacing:0.5px;margin-bottom:8px;">
+          to Your Smart Dashboard. This webpage is designed to be your all-in-one hub for students. Thus is designed by <div style="flex:1;min-width:220px;"><h4><p> Vinayak Mishra </p> </h4></div>
+        </div>
+        <div class="hero-main-text" style="color:#ffffff;">
+          All your essential study, government, and resource links in one secure place.<br>
+          <span style="color:#059669;font-weight:600;">Explore. Learn. Connect.</span>
+        </div>
+        <div class="hero-main-text" style="margin:10px 0 0 0;color:#c6afee;font-style:italic;">
+          “Education is the passport to the future, for tomorrow belongs to those who prepare for it today.”<br>
+          <span style="font-size:0.9em;color:#6b7280;">— Malcolm X</span>
+        </div>
+      </div>
+    </section>
+    <div style="height:2px;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:2px;margin-bottom:18px;"></div>
+    <p class="intro">
+      Your personalized portal brings together everything you need for your academic journey and beyond.<br>
+      <span style="color:#059669;font-weight:600;">Quickly access study materials, official forms, government portals, news, and social media—all verified and secure.</span><br>
+      <span style="color:#4c51bf;">Start exploring below and make your day productive!</span>
+    </p>
+    <div class="grid">
+      <aside class="profile-card">
+       <div class="profile-header">
+         <div>
+            <h2 id="profileName">User</h2>
+            <p id="profileEmail">you@email.example</p>
+         </div>
+       </div>
+      <div style="height:12px"></div>
+      <div class="links-panel">
+        <div class="link-card">
+          <div class="meta">Quick Links</div>
+          <div><a href="https://www.google.com" target="_blank">Official</a></div>
+        </div>
+        <div class="link-card">
+          <div class="meta">Student Portal</div>
+          <div><a href="https://erp.mmumullana.org/login/student" target="_blank">Open</a></div>
+        </div>
+        <div class="link-card">
+          <div class="meta">Currency</div>
+          <div><a href="https://www.xe.com/" target="_blank">XE</a></div>
+        </div>
+      </div>
+      </aside>
+      <main class="main-area">
+        <div class="panel">
+          <h3>Social Media</h3>
+          <div id="socialList" class="list"></div>
+        </div>
+        <div class="panel" style="display:flex;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <h3>News Channels</h3>
+            <div id="newsList" class="list"></div>
+          </div>
+          <div style="flex:1;">
+            <h3>Video Channels</h3>
+            <div id="channelsList" class="list"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Study Materials & Forms</h3>
+          <div id="studyList" class="list"></div>
+          <small style="color:#6b7280;display:block;margin-top:8px">
+            Free courseware, textbooks and common student/faculty form portals (official resources).
+          </small>
+        </div>
+        <div class="panel">
+          <h3>Government Portals (official)</h3>
+          <div style="margin-bottom:8px;">
+            <strong>Indian Government Portals</strong>
+            <div id="govIndiaList" class="list" style="margin-top:6px"></div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <strong>Other Official Government Portals</strong>
+            <div id="govOtherList" class="list" style="margin-top:6px"></div>
+          </div>
+          <p id="govConfirm" style="color:#6b7280;display:block;margin-top:8px;font-size:0.95rem"></p>
+        </div>
+        <div class="panel">
+          <h3>Latest Updates</h3>
+          <div class="updates" id="updatesList"></div>
+        </div>
+      </main>
+    </div>
+    <div class="account-modal" id="accountModal">
+      <div class="account-modal-content">
+        <button class="account-modal-close" id="accountModalClose" title="Close" aria-label="Close">&times;</button>
+        <h3>Account Settings</h3>
+        <form id="accountForm" style="display:flex;flex-direction:column;gap:12px;max-width:340px;">
+          <label>
+            <span style="font-weight:600;">Name</span>
+            <input type="text" id="accountName" style="font-size:1em;padding:8px;" />
+          </label>
+          <label>
+            <span style="font-weight:600;">Email</span>
+            <input type="email" id="accountEmail" style="font-size:1em;padding:8px;" />
+          </label>
+          <label>
+            <span style="font-weight:600;">Password</span>
+            <input type="password" id="accountPassword" style="font-size:1em;padding:8px;" autocomplete="new-password" />
+          </label>
+          <button type="button" class="btn" id="saveAccountBtn">Save Changes</button>
+          <span id="accountMsg" style="color:#059669;font-size:1em;"></span>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- FUNCTIONALITY LOGIC ---
+    let isLogin = true;
+    function toggleForm() {
+      isLogin = !isLogin;
+      document.getElementById("formTitle").textContent = isLogin ? "Login" : "Register";
+      document.querySelector("button").textContent = isLogin ? "Login" : "Sign Up";
+      document.querySelector("p").innerHTML = isLogin
+        ? "Don’t have an account? <span class='link' onclick='toggleForm()'>Register</span>"
+        : "Already have an account? <span class='link' onclick='toggleForm()'>Login</span>";
+    }
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const saved = JSON.parse(localStorage.getItem("userAccount") || "null");
+      if (saved) {
+        if (
+          username === saved.name &&
+          email === saved.email &&
+          password === saved.password
+        ) {
+          document.getElementById("loginPage").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+          populateDashboard(saved.name, saved.email);
+          return;
+        } else {
+          alert("Invalid credentials. Please check your name, email and password.");
+          return;
+        }
+      }
+      if (username && email && password) {
+        localStorage.setItem("userAccount", JSON.stringify({
+          name: username,
+          email: email,
+          password: password
+        }));
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        populateDashboard(username, email);
+      } else {
+        alert("Please enter username, email and password");
+      }
+    }
+    function logout() {
+      localStorage.removeItem("userAccount");
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("loginPage").style.display = "flex";
+    }
+    function populateDashboard(name, email) {
+      document.getElementById("profileName").textContent = name;
+      document.getElementById("profileEmail").textContent = email;
+      document.getElementById("userEmail").textContent = email;
+      const social = [
+        {name:"Facebook", url:"https://facebook.com"},
+        {name:"Twitter/X", url:"https://twitter.com"},
+        {name:"LinkedIn", url:"https://linkedin.com"},
+        {name:"Instagram", url:"https://instagram.com"}
+      ];
+      const news = [
+        {name:"BBC", url:"https://www.bbc.com"},
+        {name:"CNN", url:"https://www.cnn.com"},
+        {name:"Reuters", url:"https://www.reuters.com"},
+        {name:"Al Jazeera", url:"https://www.aljazeera.com"}
+      ];
+      const channels = [
+        {name:"YouTube - News", url:"https://www.youtube.com"},
+        {name:"YouTube - Tech", url:"https://www.youtube.com"}
+      ];
+      const mkChip = (item) => `<a class="chip" href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>`;
+      document.getElementById('socialList').innerHTML = social.map(mkChip).join('');
+      document.getElementById('newsList').innerHTML = news.map(mkChip).join('');
+      document.getElementById('channelsList').innerHTML = channels.map(mkChip).join('');
+      const studyMaterials = [
+        {name: "Khan Academy (free courses)", url: "https://www.khanacademy.org"},
+        {name: "MIT OpenCourseWare", url: "https://ocw.mit.edu"},
+        {name: "Coursera (education)", url: "https://www.coursera.org"},
+        {name: "NPTEL (India - courses)", url: "https://nptel.ac.in"},
+        {name: "SWAYAM (India - MOOCs)", url: "https://swayam.gov.in"},
+        {name: "NCERT (India - textbooks)", url: "https://ncert.nic.in"}
+      ];
+      document.getElementById('studyList').innerHTML = studyMaterials.map(mkChip).join('');
+      const govIndia = [
+        {name: "National Portal of India", url: "https://www.india.gov.in"},
+        {name: "Ministry of Education (India)", url: "https://www.education.gov.in"},
+        {name: "UGC (University Grants Commission)", url: "https://www.ugc.ac.in"},
+        {name: "National Scholarship Portal", url: "https://scholarships.gov.in"},
+        {name: "Data.gov.in (open data)", url: "https://data.gov.in"}
+      ];
+      const govOther = [
+        {name: "Gov.UK (UK official)", url: "https://www.gov.uk"},
+        {name: "USA.gov (US official)", url: "https://www.usa.gov"}
+      ];
+      document.getElementById('govIndiaList').innerHTML = govIndia.map(mkChip).join('');
+      document.getElementById('govOtherList').innerHTML = govOther.map(mkChip).join('');
+      document.getElementById('govConfirm').textContent =
+        "Entries under 'Indian Government Portals' point to official Indian government websites (domains such as .gov.in or .nic.in). " +
+        "Other entries are official government portals for their respective countries.";
+      const updates = [
+        `${name} logged in successfully.`,
+        `New article from BBC: "Top headlines today"`,
+        `Student portal maintenance scheduled.`,
+        `Exchange rates updated.`
+      ];
+      document.getElementById('updatesList').innerHTML = updates.map(u => `<div style="padding:8px 0;border-bottom:1px solid #f1f5f9;color:#334155">${u}</div>`).join('');
+      document.getElementById('accountName').value = name;
+      document.getElementById('accountEmail').value = email;
+      document.getElementById('accountPassword').value = "";
+      document.getElementById('accountMsg').textContent = "";
+      document.getElementById('saveAccountBtn').onclick = function() {
+        const newName = document.getElementById('accountName').value.trim();
+        const newEmail = document.getElementById('accountEmail').value.trim();
+        const newPassword = document.getElementById('accountPassword').value;
+        if (!newName || !newEmail || !newPassword) {
+          document.getElementById('accountMsg').textContent = "Please fill all fields to update your account.";
+          document.getElementById('accountMsg').style.color = "#b91c1c";
+          return;
+        }
+        document.getElementById("profileName").textContent = newName;
+        document.getElementById("profileEmail").textContent = newEmail;
+        document.getElementById("userEmail").textContent = newEmail;
+        document.getElementById('accountMsg').textContent = "Account updated successfully!";
+        document.getElementById('accountMsg').style.color = "#059669";
+        document.getElementById('accountPassword').value = "";
+        localStorage.setItem("userAccount", JSON.stringify({
+          name: newName,
+          email: newEmail,
+          password: newPassword
+        }));
+      };
+    }
+    const carSvg = document.getElementById('carSvg');
+    const card = document.getElementById('cardBox');
+    card.addEventListener('mousemove', function(e) {
+      const rect = card.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      let relX = x / rect.width;
+      let relY = y / rect.height;
+      let tx = (relX - 0.5) * 200;
+      let ty = (relY - 0.5) * 100 + 25;
+      let scale = 0.8 + relY * 0.4;
+      carSvg.style.transform = `translate(-50%, 0) translate(${tx}px, ${ty}px) scale(${scale})`;
+    });
+    card.addEventListener('mouseleave', function() {
+      carSvg.style.transform = `translate(-50%, 0) translate(0px, 25px) scale(1)`;
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+      carSvg.style.transform = `translate(-50%, 0) translate(0px, 25px) scale(1)`;
+    });
+    const passwordInput = document.getElementById('password');
+    const passwordEye = document.getElementById('passwordEye');
+    let isPasswordVisible = false;
+    function updateEyeIcon() {
+      if (passwordInput.value.length > 0) {
+        passwordEye.textContent = '🙈';
+        passwordEye.classList.add('closed');
+      } else {
+        passwordEye.textContent = '👁️';
+        passwordEye.classList.remove('closed');
+      }
+    }
+    passwordEye.addEventListener('click', function() {
+      isPasswordVisible = !isPasswordVisible;
+      if (isPasswordVisible) {
+        passwordInput.type = 'text';
+        passwordEye.textContent = '👀';
+        passwordEye.classList.add('closed');
+      } else {
+        passwordInput.type = 'password';
+        updateEyeIcon();
+      }
+      passwordInput.focus();
+    });
+    passwordInput.addEventListener('input', updateEyeIcon);
+    updateEyeIcon();
+    const usernameRow = document.getElementById('usernameRow');
+    let animLoopActive = false;
+    let animationFrameId = null;
+    let loopStartTime = null;
+    let duration = 60000;
+    function resetUsernameRowStyle() {
+      usernameRow.style.transform = 'translate(0, 0)';
+      usernameRow.style.boxShadow = '0 2px 6px rgba(76,81,191,0.08)';
+      animLoopActive = false;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    }
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function randomAnimationLoop(startTime) {
+      if (!animLoopActive) return;
+      let now = Date.now();
+      let elapsed = now - startTime;
+      let t = (elapsed % 750) / 750 * 2 * Math.PI;
+      let x, y;
+      if (Math.random() < 0.20) {
+        let r = 70 + Math.random() * 30;
+        x = Math.cos(t) * r;
+        y = Math.sin(t) * r;
+      } else {
+        x = randomInt(-115, 115);
+        y = randomInt(-60, 90);
+      }
+      usernameRow.style.transform = `translate(${x}px, ${y}px)`;
+      usernameRow.style.boxShadow = '0 12px 18px rgba(76,81,191,0.18)';
+      if (Date.now() - loopStartTime < duration && animLoopActive) {
+        animationFrameId = requestAnimationFrame(() => randomAnimationLoop(startTime));
+      } else {
+        resetUsernameRowStyle();
+      }
+    }
+    function startUsernameLoop() {
+      if (animLoopActive) return;
+      animLoopActive = true;
+      loopStartTime = Date.now();
+      randomAnimationLoop(Date.now());
+      setTimeout(() => {
+        animLoopActive = false;
+        resetUsernameRowStyle();
+      }, duration);
+    }
+    usernameRow.addEventListener('mouseenter', startUsernameLoop);
+    usernameRow.addEventListener('mouseleave', () => {
+      animLoopActive = false;
+      resetUsernameRowStyle();
+    });
+    resetUsernameRowStyle();
+    const boyContainer = document.getElementById('boyContainer');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const inputFields = [usernameInput, emailInput, passwordInput];
+    function moveBoyAboveInput(input) {
+      const card = document.getElementById('cardBox');
+      const cardRect = card.getBoundingClientRect();
+      const inputRect = input.getBoundingClientRect();
+      const offset = inputRect.top - cardRect.top;
+      let y = offset - 60;
+      if (y < 0) y = 0;
+      boyContainer.style.top = y + "px";
+    }
+    function resetBoyPosition() {
+      boyContainer.style.top = "0px";
+    }
+    inputFields.forEach(input => {
+      input.addEventListener('focus', function() {
+        moveBoyAboveInput(input);
+      });
+      input.addEventListener('blur', function() {
+        setTimeout(resetBoyPosition, 250);
+      });
+    });
+    window.addEventListener('DOMContentLoaded', resetBoyPosition);
+    const boyFace = document.getElementById('boyFace');
+    const noobPopup = document.getElementById('noobPopup');
+    const leaveItPopup = document.getElementById('leaveItPopup');
+    const geniusPopup = document.getElementById('geniusPopup');
+    const smilePopup = document.getElementById('smilePopup');
+    const devilPopup = document.getElementById('devilPopup');
+    const laughingEmojis = document.getElementById('laughingEmojis');
+    const boyEyeLeft = document.getElementById('boyEyeLeft');
+    const boyEyeRight = document.getElementById('boyEyeRight');
+    let laughTimeout = null;
+    let enterCount = 0;
+    let emojiTimeout = null;
+    let popupTimeout = null;
+    let geniusTimeout = null;
+    let smileTimeout = null;
+    let devilTimeout = null;
+    let passwordEyesTracking = false;
+    function resetPopups() {
+      noobPopup.classList.remove('show');
+      leaveItPopup.classList.remove('show');
+      laughingEmojis.classList.remove('show');
+      geniusPopup.classList.remove('show');
+      smilePopup.classList.remove('show');
+      devilPopup.classList.remove('show');
+      if (popupTimeout) clearTimeout(popupTimeout);
+      if (emojiTimeout) clearTimeout(emojiTimeout);
+      if (geniusTimeout) clearTimeout(geniusTimeout);
+      if (smileTimeout) clearTimeout(smileTimeout);
+      if (devilTimeout) clearTimeout(devilTimeout);
+    }
+    usernameRow.addEventListener('mouseenter', () => {
+      enterCount++;
+      boyFace.classList.add('laughing');
+      boyFace.classList.remove('shock', 'smile', 'devil', 'password-eyes', 'password-eyes-tracking', 'super-pop-eyes');
+      if (laughTimeout) clearTimeout(laughTimeout);
+      laughTimeout = setTimeout(() => boyFace.classList.remove('laughing'), 900);
+      resetPopups();
+      if (enterCount === 3) {
+        noobPopup.classList.add('show');
+        popupTimeout = setTimeout(() => {
+          noobPopup.classList.remove('show');
+        }, 1200);
+      } else if (enterCount === 4) {
+        leaveItPopup.classList.add('show');
+        laughingEmojis.classList.add('show');
+        emojiTimeout = setTimeout(() => {
+          leaveItPopup.classList.remove('show');
+          laughingEmojis.classList.remove('show');
+        }, 2000);
+        enterCount = 0;
+      }
+    });
+    usernameRow.addEventListener('mouseleave', () => {
+      if (laughTimeout) clearTimeout(laughTimeout);
+      boyFace.classList.remove('laughing');
+      resetPopups();
+    });
+    boyFace.addEventListener('click', function(e){
+      noobPopup.classList.add('show');
+      setTimeout(() => {
+        noobPopup.classList.remove('show');
+      }, 1000);
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    usernameInput.addEventListener('focus', () => {
+      resetPopups();
+      boyFace.classList.add('shock');
+      boyFace.classList.remove('smile', 'devil', 'password-eyes', 'password-eyes-tracking', 'super-pop-eyes');
+      geniusPopup.classList.add('show');
+      animLoopActive = false;
+      resetUsernameRowStyle();
+      geniusTimeout = setTimeout(() => {
+        boyFace.classList.remove('shock');
+        geniusPopup.classList.remove('show');
+      }, 1700);
+    });
+    usernameInput.addEventListener('blur', () => {
+      boyFace.classList.remove('shock');
+      geniusPopup.classList.remove('show');
+      if (geniusTimeout) clearTimeout(geniusTimeout);
+    });
+    emailInput.addEventListener('focus', () => {
+      resetPopups();
+      boyFace.classList.add('smile');
+      boyFace.classList.remove('shock', 'devil', 'password-eyes', 'password-eyes-tracking', 'super-pop-eyes');
+      smilePopup.classList.add('show');
+      smileTimeout = setTimeout(() => {
+        boyFace.classList.remove('smile');
+        smilePopup.classList.remove('show');
+      }, 1800);
+    });
+    emailInput.addEventListener('blur', () => {
+      boyFace.classList.remove('smile');
+      smilePopup.classList.remove('show');
+      if (smileTimeout) clearTimeout(smileTimeout);
+      if (devilTimeout) clearTimeout(devilTimeout);
+    });
+    emailInput.addEventListener('input', () => {
+      let val = emailInput.value.trim();
+      if (val.match(/\.com\s*$/i)) {
+        resetPopups();
+        boyFace.classList.add('devil');
+        boyFace.classList.remove('shock', 'smile', 'password-eyes', 'password-eyes-tracking', 'super-pop-eyes');
+        devilPopup.classList.add('show');
+        devilTimeout = setTimeout(() => {
+          boyFace.classList.remove('devil');
+          devilPopup.classList.remove('show');
+        }, 1800);
+      }
+    });
+    passwordInput.addEventListener('focus', () => {
+      resetPopups();
+      boyFace.classList.remove('laughing', 'shock', 'smile', 'devil', 'password-eyes', 'password-eyes-tracking');
+      boyFace.classList.add('super-pop-eyes');
+      setSuperPopEyes(0, 1.7);
+      passwordEyesTracking = false;
+    });
+    passwordInput.addEventListener('blur', () => {
+      boyFace.classList.remove('super-pop-eyes', 'password-eyes', 'password-eyes-tracking');
+      setSuperPopEyes(0, 1);
+      passwordEyesTracking = false;
+    });
+    passwordInput.addEventListener('input', () => {
+      if (document.activeElement !== passwordInput) return;
+      boyFace.classList.add('super-pop-eyes');
+      let len = passwordInput.value.length;
+      let maxLen = Math.max(passwordInput.maxLength || 14, 10);
+      if (len > maxLen) len = maxLen;
+      let y = Math.min(38, 8 + len * 2.7);
+      let scale = 1.7 + len * 0.12;
+      if (scale > 2.7) scale = 2.7;
+      setSuperPopEyes(y, scale);
+    });
+    function setSuperPopEyes(y, scale) {
+      document.getElementById('boyEyeLeft').setAttribute('transform', `translate(0 ${y}) scale(${scale})`);
+      document.getElementById('boyEyeRight').setAttribute('transform', `translate(0 ${y}) scale(${scale})`);
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      const saved = JSON.parse(localStorage.getItem("userAccount") || "null");
+      if (saved) {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        populateDashboard(saved.name, saved.email);
+      }
+      const accountModal = document.getElementById('accountModal');
+      const accountIconBtn = document.getElementById('accountIconBtn');
+      const accountModalClose = document.getElementById('accountModalClose');
+      if (accountIconBtn && accountModal) {
+        accountIconBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          accountModal.classList.add('active');
+        });
+      }
+      if (accountModalClose) {
+        accountModalClose.addEventListener('click', function () {
+          if (accountModal) accountModal.classList.remove('active');
+        });
+      }
+      if (accountModal) {
+        accountModal.addEventListener('click', function (e) {
+          if (e.target === accountModal) accountModal.classList.remove('active');
+        });
+      }
+      function scrollToPanel(panelId) {
+        const el = document.getElementById(panelId);
+        if (el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }
+      const map = [
+        ['iconSocial','socialList'],
+        ['iconNews','newsList'],
+        ['iconVideo','channelsList'],
+        ['iconStudy','studyList'],
+        ['iconGov','govIndiaList']
+      ];
+      map.forEach(([iconId, panelId]) => {
+        const btn = document.getElementById(iconId);
+        if (btn) btn.addEventListener('click', function(e){ e.preventDefault(); scrollToPanel(panelId); });
+      });
+    });
+  </script>
+</body>
+</html>
